@@ -5,6 +5,7 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     private Rigidbody playerRigidBody;
+    private Animator playerAnim;
     public float forceMultiplier;
     public float gravityMultiplier;
     public bool onGround = true;
@@ -13,16 +14,18 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         playerRigidBody = GetComponent<Rigidbody>();
+        playerAnim = GetComponent<Animator>();
         Physics.gravity *= gravityMultiplier;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space) && onGround)
+        if (Input.GetKeyDown(KeyCode.Space) && onGround && !gameOver)
         {
             playerRigidBody.AddForce(Vector3.up * forceMultiplier, ForceMode.Impulse);
             onGround = false;
+            playerAnim.SetTrigger("Jump_trig");
         }
     }
 
@@ -33,6 +36,8 @@ public class PlayerController : MonoBehaviour
         {
             gameOver = true;
             Debug.Log("Game Over!");
+            playerAnim.SetBool("Death_b", true);
+            playerAnim.SetInteger("DeathType_int", 1);
         }
 
         // set on ground state to true if we hit ground
